@@ -1,0 +1,18 @@
+<div class="my-3">
+<h5 [ngClass]="{'strike':!todoinp.active}">  {{todoinp.title}}</h5>
+
+
+<p [ngClass]="{'strike':!todoinp.active}">  {{todoinp.desc}}</p>
+
+<div class="form-check">
+    <input type="checkbox" class="form-check-input" id="exampleCheck1" (click)="oncheckboxclick(todoinp)" [checked]="!todoinp.active">
+   <label class="form-check-label" for="exampleCheck1{{i}}">Mark as Done</label>
+
+  </div>
+
+
+  <br> 
+<button class="btn btn-dark" (click)="onClick(todoinp)">  Delete</button>
+
+
+</div>
