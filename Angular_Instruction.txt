@@ -1,0 +1,524 @@
+
+What is Angular?
+
+Angular is used for building complex, 
+dynamic web applications that require a lot of interactivity, such as single-page applications (SPAs).
+
+Dependency injection: This feature allows you to easily manage dependencies and create reusable code.
+
+Two-way data binding: This allows you to create a real-time connection between the model and the view, which makes it easier to build complex interfaces.
+
+Directives: Directives are used to extend HTML with custom attributes and elements, which allows you to create reusable components.
+
+Testing: Angular provides built-in support for unit testing and end-to-end testing, which makes it easier to write and maintain tests for your application.
+
+MVC architecture: Angular follows the Model-View-Controller (MVC) architecture pattern, 
+which helps you to organize your code and separate concerns.
+
+
+Basic steps:
+
+npm install -g @angular/cli
+
+Add %AppData%\npm inside PATH
+
+ng v  (To check the version of angular installed)
+
+
+ng serve
+(To serve/run the app)
+
+
+
+
+
+
+
+app.component.html is what is displayed in the page
+app.component.css -> file where we include the css
+
+
+
+app.component.specs.ts-> Basically used for testing purposes
+
+
+app.component.ts: (very important)
+This file is the main component of your Angular application and is
+responsible for defining the layout and behavior of the application.
+
+app.module.ts:  (important)
+
+ This file defines the root module of your Angular application. 
+ It contains metadata that tells Angular how to assemble your application and includes references
+  to all the components, directives, pipes, and services that your application needs.
+
+  Serves as an entry point  
+  
+
+app.component.spec.ts: 
+This file contains the unit tests for the AppComponent class.
+ These tests verify that the component is working as expected.
+
+index.html: 
+This is the main HTML file for your application. 
+It includes the <app-root> tag, which is the entry point for your application.
+
+main.ts:
+ This file is the entry point for your application.
+  It bootstraps the root module and starts the application.
+
+styles.css: 
+This file contains the global styles for your application.
+ Any styles defined in this file will apply to all components in your application.
+
+app-routing.module.ts:
+ This file defines the routes for your application. 
+ It includes references to all the components that can be navigated to and from within your application.
+
+
+
+
+ Steps :
+ Continuation
+
+npm install bootstrap
+
+npm install jquery
+
+Go to angular.json  -> architect-> build-> styles -> 
+Add
+
+"./node_modules/bootstrap/dist/css/bootstrap.min.css" 
+
+
+Similarly inside scripts add 
+
+["./node_modules/bootstrap/dist/js/bootstrap.js" ,
+"./node_modules/jquery/dist/jquery.js" ]
+
+
+inside app.component.html-> we can write some html code and check the same
+
+
+
+TO GENERATE A NEW COMPONENT 
+
+ng generate component MyComponents/todos
+
+Whatever variables we declare in app.component.ts putting that as {{variable}} inside 
+app.component.html will work
+
+
+Inside app.component.html,  we can write This is  {{title}}... 
+
+
+Inside app.component.ts if we include this piece of code
+
+
+export class AppComponent {
+  title = 'ls-todo-app';
+  constructor(){
+
+    setTimeout(() => {
+      this.title="New title";
+    }, 2000);
+  }
+}
+
+
+The title will be changed after 2 seconds
+
+
+
+in app.component.ts if the selector is specified as 'app-root'
+then in index.html 
+ <app-root>  The app.component.html content appears hear  </app-root>
+
+
+And inside app.component.html also we can introduce various user-defined components such as the ones
+we generated using ng generate.
+
+
+In todos.component.ts if we see the selector it is "todos-app"
+
+so in app.component.html we can include content of todos.component.ts inside the <todos-app> </todos-app>
+
+
+Create Todo.ts  inside app folder
+
+inside that
+
+export class Todo{
+sno:number
+title:string
+desc:string
+active:boolean
+
+
+}
+
+
+inside todos.component.ts
+
+import {Todo} from '../../Todo'
+
+export class TodosComponent  {
+
+  todos: Todo[];
+  constructor(){};
+  
+}
+
+(In case u see error in Todo.ts declaration: Just switch to tsconfig.json and change "strict" as "false")
+
+
+
+export class TodosComponent  {
+
+  todos: Todo[];
+  constructor(){
+
+    this.todos= [
+      {
+      sno: 1,
+      title:"Title number 1",
+      desc: "First title",
+      active:true
+      },
+      {
+        sno: 2,
+        title:"Title number 2",
+        desc: "Second title",
+        active:true
+        },
+        {
+          sno: 3,
+          title:"Title number 3",
+          desc: "Third title",
+          active:true
+          }
+
+    ]
+
+
+    As this is present in todos.component.ts we can call or display this in
+    todos.component.html using "ngfor".
+     
+    Directives are like custom HTML attributes and we can include javascript in it
+
+    NGFOR directive 
+   (inside todos.component.html
+    <ul *ngFor="let a of todos">
+
+    <h2>  {{a.sno}}  {{a.title}} </h2>
+
+
+Another Method 
+
+Without having to directly use ngfor directive
+
+We can use another component called todo-item and display using that
+
+ng generate component MyComponents/todo-item
+
+
+Inside todos.component.html
+
+
+<div *ngFor="let a of todos">
+
+<app-todo-item [todoinp]="a">    </app-todo-item>
+</div>
+
+
+But we need to import Todo and Declare this input inside todos.component.ts
+
+
+Inside todos.component.ts  
+
+
+import { Component, Input, OnInit } from '@angular/core';
+import { Todo } from 'src/app/Todo';
+
+
+@Component({
+  selector: 'app-todo-item',
+  templateUrl: './todo-item.component.html',
+  styleUrls: ['./todo-item.component.css']
+})
+export class TodoItemComponent{
+
+  @Input() todoinp : Todo;
+
+  constructor(){
+
+  }
+
+
+
+  Inside todo-item.component.html 
+
+  <p> {{todoinp.title}}</p>
+
+
+
+Event Emitter
+
+
+Inside todo-item.component.html
+
+
+<h4> {{todoinp.title}}</h4>
+
+
+<p>  {{todoinp.desc}}</p>
+
+
+<button class="btn btn-dark" (click)="onClick(todoinp)">  Delete</button>
+
+
+
+Inside todo-item.component.ts 
+
+  @Input() todoinp : Todo;
+  @Output() tododelete: EventEmitter<Todo> =new EventEmitter();
+
+ onClick(todo : Todo){
+    this.tododelete.emit(todo);
+    console.log("Event is triggered!");
+  }
+
+
+  Update todos.component.html  
+
+
+
+  <div *ngFor="let a of todos">
+
+<app-todo-item [todoinp]="a" (tododelete)="deleteTodo( $event )">    </app-todo-item>
+
+
+</div>
+
+
+
+Inside todos.component.ts   
+
+
+
+  deleteTodo(todo:Todo){
+    let idx=this.todos.indexOf(todo);
+    this.todos.splice(idx,1)
+  }
+
+now we need to ADD a todo for which form is needed
+Add FORMSMODULE inside app.module.ts -> imports-> add -> FORMSMODULE
+
+  Inside Add-todo.component.html  
+
+
+  <form (ngSubmit) =" OnSubmit()">
+
+
+Add  
+[(ngModel)]="title"
+[(ngModel)]="desc"
+in the same forms  in add-todo.component.html  
+
+
+In todo-item.component.ts
+
+
+@Input()  todoinp : Todo;
+@Output() tododelete: EventEmitter<Todo> =new EventEmitter();
+
+  constructor(){
+
+    
+
+  }
+
+  onClick(todo : Todo){
+    this.tododelete.emit(todo);
+    console.log("Event is triggered!");
+  }
+ 
+}
+
+
+
+
+Inside add-todo.component.ts
+
+import { Todo } from 'src/app/Todo';
+
+
+export class AddTodoComponent {
+  @Output() todoadd: EventEmitter<Todo> =new EventEmitter();
+  title: string 
+  desc: string 
+  constructor(){
+
+  }
+  onSubmit(){
+
+
+    const todo= {
+
+      sno:8,
+      title:this.title,
+      desc:this.title,
+      active:true
+    }
+
+    this.todoadd.emit(todo);
+  }
+  
+
+}
+
+
+
+Inside todos.component.ts
+
+
+ deleteTodo(todo:Todo){
+    let idx=this.todos.indexOf(todo);
+    this.todos.splice(idx,1)
+  }
+
+
+  addtodo(todo:Todo){
+    
+    this.todos.push(todo);
+  }
+
+
+  Inside todos.component.html 
+
+
+  <app-add-todo (todoadd)="addtodo($event)"> </app-add-todo>
+
+
+  In todos.component.ts we can delete the previously added this.todos 
+
+  this.todos= []  (instead of pre-loaded values)
+
+
+
+  Now we need to save the deleted and added files in local storage so that on reload
+  we do not see the preloaded todos.
+
+  So we need to store these in the local storage
+
+
+  Hence in todos.component.ts  include the following...
+
+  export class TodosComponent  {
+  localItem: string;
+  todos:Todo[];
+  constructor() { 
+    this.localItem = localStorage.getItem("todos");
+    if(this.localItem == null){
+    this.todos = [];
+    }
+    else{ 
+      this.todos = JSON.parse(this.localItem); 
+    }
+
+   
+
+   in deleteTodo and addTodo functions include this as last line:  
+
+
+   localStorage.setItem("todos", JSON.stringify(this.todos));
+
+   
+
+   NGCLASS-> Adds and removes css classes on an html element 
+
+   E.g:
+
+   <some-element [ngClass]="{'first': true, 'second': true, 'third': false}">...</some-element>
+
+   
+
+   In todo-item.component.html  
+
+
+
+   <h5 [ngClass]="{'strike':!todoinp.active}">  {{todoinp.title}}</h5>
+
+
+<p [ngClass]="{'strike':!todoinp.active}">  {{todoinp.desc}}</p>
+
+
+
+<div class="form-check">
+    <input type="checkbox" class="form-check-input" id="exampleCheck1" (click)="oncheckboxclick(todoinp)" [checked]="!todoinp.active">
+   <label class="form-check-label" for="exampleCheck1{{i}}">Mark as Done</label>
+
+  </div>
+
+
+
+
+
+  Checkbox toggling
+ in todos.component.ts  
+
+
+
+   toggletodo(todo:Todo){
+    
+    let idx=this.todos.indexOf(todo);
+    this.todos[idx].active= !this.todos[idx].active;
+    localStorage.setItem("todos", JSON.stringify(this.todos));
+  }
+
+
+
+
+
+Routing in Angular
+
+
+import { AboutComponent } from './MyComponents/about/about.component';
+
+
+const routes: Routes = [
+  { path: '/', component: TodosComponent },
+  { path: '/about', component: AboutComponent },
+];
+
+(we need to generate the about component)
+
+in app.component.html we need to include <router-outlet>   </router-outlet>
+
+Instead of href in navbar we need to use "routerLink" attribute. E.g: 
+
+routerLink: "/"
+
+
+
+For production purposes ... we need to put the following command in the terminal 
+
+ng build --configuration production
+
+We can go to the file location and see the dist folder which is created using this command
+
+
+
+To deploy in github pages we need to rename the repository name as
+
+username.github.io  
+
+
+Upload the files in the repository
+
+Go to github pages and check the main branch
+
+
+The deployed link will be available
+
+
